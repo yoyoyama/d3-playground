@@ -1,20 +1,31 @@
 import { useCallback, useEffect, useState } from 'react';
+import * as d3 from 'd3';
 import { Arc } from './components/Arc';
+import { PieChart } from './components/PieChart';
 import type { Data as ArcData } from './components/Arc';
+import type { Data as PieChartData } from './components/PieChart';
 
 import styles from './App.module.css';
 
 export default function App() {
   const [arcData, setArcData] = useState<ArcData>(0);
+  const [pieChartData, setPieChartData] = useState<PieChartData>([]);
 
   const generateArcData = useCallback(() => {
     const data = Math.random();
     setArcData(data);
   }, []);
 
+  const generatePieChartData = useCallback(() => {
+    const fruits = ['Apple', 'Banana', 'Cherry', 'Muscat', 'Orange'];
+    const data = fruits.map((fruit) => ({ name: fruit, value: Math.random() * 100 }));
+    setPieChartData(data);
+  }, []);
+
   const generateData = useCallback(() => {
     generateArcData();
-  }, [generateArcData]);
+    generatePieChartData();
+  }, [generateArcData, generatePieChartData]);
 
   useEffect(() => {
     generateData();
@@ -32,6 +43,10 @@ export default function App() {
         <section>
           <h2>Arc</h2>
           <Arc data={arcData} />
+        </section>
+        <section>
+          <h2>Pie Chart</h2>
+          <PieChart data={pieChartData} />
         </section>
       </main>
     </>

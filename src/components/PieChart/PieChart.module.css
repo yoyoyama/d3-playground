@@ -1,0 +1,8 @@
+.pieChart {
+  position: relative;
+}
+
+.path {
+  stroke: #fff;
+  stroke-width: 2px;
+}
