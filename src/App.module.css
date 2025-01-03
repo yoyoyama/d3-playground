@@ -1,0 +1,11 @@
+.header {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+}
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 48px;
+}

@@ -1,0 +1,28 @@
+.arc {
+  position: relative;
+}
+
+.backPath {
+  fill: #eee;
+}
+
+.frontPath {
+  fill: #fc0;
+}
+
+.label {
+  align-items: baseline;
+  display: flex;
+  font-size: 24px;
+  font-weight: 700;
+  gap: 2px;
+  left: 50%;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.value {
+  font-size: 48px;
+}
