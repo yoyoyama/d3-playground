@@ -6,3 +6,23 @@
   stroke: #fff;
   stroke-width: 2px;
 }
+
+.path[data-name='Apple'] {
+  fill: #ff725c;
+}
+
+.path[data-name='Blueberry'] {
+  fill: #4269d0;
+}
+
+.path[data-name='Grape'] {
+  fill: #a463f2;
+}
+
+.path[data-name='Muscat'] {
+  fill: #3ca951;
+}
+
+.path[data-name='Orange'] {
+  fill: #efb118;
+}

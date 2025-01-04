@@ -17,7 +17,7 @@ export default function App() {
   }, []);
 
   const generatePieChartData = useCallback(() => {
-    const fruits = ['Apple', 'Banana', 'Cherry', 'Muscat', 'Orange'];
+    const fruits = ['Apple', 'Blueberry', 'Grape', 'Muscat', 'Orange'];
     const data = fruits.map((fruit) => ({ name: fruit, value: Math.random() * 100 }));
     setPieChartData(data);
   }, []);

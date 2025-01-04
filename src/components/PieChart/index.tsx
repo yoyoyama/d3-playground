@@ -8,7 +8,7 @@ export type PieChartData = {
   value: number;
 }[];
 
-type Props = ComponentPropsWithoutRef<'svg'> & {
+type Props = ComponentPropsWithoutRef<'div'> & {
   data: PieChartData;
   size?: number;
 };
@@ -18,26 +18,35 @@ export function PieChart({ data, size = 240, ...props }: Props) {
     return data.toSorted((a, b) => (a.value > b.value ? -1 : 1));
   }, [data]);
 
-  const pathData = useMemo(() => {
+  const pieSize = useMemo(() => {
     const outerRadius = size / 2;
     const innerRadius = 0;
-    const color = d3.scaleOrdinal(d3.schemeObservable10);
+
+    return { outerRadius, innerRadius };
+  }, [size]);
+
+  const pieData = useMemo(() => {
     const arc = d3.arc();
     const pie = d3.pie().sort(null);
     const arcs = pie(sortedData.map((d) => d.value));
 
     return sortedData.map((data, i) => {
-      const d = arc({ ...arcs[i], innerRadius, outerRadius }) ?? '';
-      return { ...data, d, color: color(data.name) };
+      const d =
+        arc({
+          ...arcs[i],
+          innerRadius: pieSize.innerRadius,
+          outerRadius: pieSize.outerRadius,
+        }) ?? '';
+      return { ...data, d };
     });
-  }, [size, sortedData]);
+  }, [pieSize, sortedData]);
 
   return (
-    <div className={styles.pieChart}>
-      <svg width={size} height={size} {...props}>
+    <div className={styles.pieChart} {...props}>
+      <svg width={size} height={size}>
         <g transform={`translate(${size / 2}, ${size / 2})`}>
-          {pathData.map((data) => (
-            <path key={data.name} d={data.d} fill={data.color} className={styles.path} />
+          {pieData.map((data) => (
+            <path key={data.name} d={data.d} data-name={data.name} className={styles.path} />
           ))}
         </g>
       </svg>
