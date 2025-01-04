@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as d3 from 'd3';
-import { Arc } from './components/Arc';
+import { ArcChart } from './components/ArcChart';
 import { BarChart } from './components/BarChart';
 import { LineChart } from './components/LineChart';
 import { PieChart } from './components/PieChart';
-import type { ArcData } from './components/Arc';
+import type { ArcChartData } from './components/ArcChart';
 import type { BarChartData } from './components/BarChart';
 import type { LineChartData } from './components/LineChart';
 import type { PieChartData } from './components/PieChart';
@@ -21,13 +21,13 @@ const fruits = [
 
 export default function App() {
   const period = useMemo<[Date, Date]>(() => [new Date(2024, 11, 15), new Date(2025, 0, 15)], []);
-  const [arcData, setArcData] = useState<ArcData>(0);
+  const [arcChartData, setArcChartData] = useState<ArcChartData>(0);
   const [barChartData, setBarChartData] = useState<BarChartData>([]);
   const [lineChartData, setLineChartData] = useState<LineChartData>([]);
   const [pieChartData, setPieChartData] = useState<PieChartData>([]);
 
-  const generateArcData = useCallback(() => {
-    setArcData(Math.random());
+  const generateArcChartData = useCallback(() => {
+    setArcChartData(Math.random());
   }, []);
 
   const generateBarChartData = useCallback(() => {
@@ -60,11 +60,11 @@ export default function App() {
   }, []);
 
   const generateData = useCallback(() => {
-    generateArcData();
+    generateArcChartData();
     generateBarChartData();
     generateLineChartData();
     generatePieChartData();
-  }, [generateArcData, generateBarChartData, generateLineChartData, generatePieChartData]);
+  }, [generateArcChartData, generateBarChartData, generateLineChartData, generatePieChartData]);
 
   useEffect(() => {
     generateData();
@@ -80,8 +80,8 @@ export default function App() {
       </header>
       <main className={styles.main}>
         <section>
-          <h2>Arc</h2>
-          <Arc data={arcData} />
+          <h2>Arc Chart</h2>
+          <ArcChart data={arcChartData} />
         </section>
         <section>
           <h2>Pie Chart</h2>

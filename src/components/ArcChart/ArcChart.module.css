@@ -1,16 +1,16 @@
-.arc {
+.arcChart {
   position: relative;
 }
 
-.backPath {
+.backArc {
   fill: #eee;
 }
 
-.frontPath[data-status='good'] {
+.frontArc[data-status='good'] {
   fill: #3ca951;
 }
 
-.frontPath[data-status='bad'] {
+.frontArc[data-status='bad'] {
   fill: #ff725c;
 }
 
@@ -27,6 +27,6 @@
   transform: translate(-50%, -50%);
 }
 
-.value {
+.label .value {
   font-size: 48px;
 }

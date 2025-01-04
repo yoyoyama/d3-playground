@@ -2,27 +2,27 @@
   position: relative;
 }
 
-.path {
+.arc {
   stroke: #fff;
   stroke-width: 2px;
 }
 
-.path[data-id='apple'] {
+.arc[data-id='apple'] {
   fill: #ff725c;
 }
 
-.path[data-id='blueberry'] {
+.arc[data-id='blueberry'] {
   fill: #4269d0;
 }
 
-.path[data-id='grape'] {
+.arc[data-id='grape'] {
   fill: #a463f2;
 }
 
-.path[data-id='muscat'] {
+.arc[data-id='muscat'] {
   fill: #3ca951;
 }
 
-.path[data-id='orange'] {
+.arc[data-id='orange'] {
   fill: #efb118;
 }

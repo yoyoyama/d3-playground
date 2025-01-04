@@ -6,22 +6,24 @@ svg {
   overflow: visible;
 }
 
-.bars rect {
+.bar {
   fill: #4269d0;
 }
 
-.axisX line {
-  stroke: #ddd;
+.frame {
+  stroke: #ccc;
 }
 
-.axisX text {
+.label {
   font-size: 12px;
+}
+
+.axisX .label {
   text-anchor: middle;
   transform: translate(0, 1em);
 }
 
-.axisY text {
-  font-size: 12px;
+.axisY .label {
   text-anchor: end;
   transform: translate(-8px, 0.3em);
 }
