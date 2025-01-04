@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as d3 from 'd3';
 import { Arc } from './components/Arc';
 import { BarChart } from './components/BarChart';
+import { LineChart } from './components/LineChart';
 import { PieChart } from './components/PieChart';
 import type { ArcData } from './components/Arc';
 import type { BarChartData } from './components/BarChart';
+import type { LineChartData } from './components/LineChart';
 import type { PieChartData } from './components/PieChart';
 
 import styles from './App.module.css';
@@ -18,13 +20,14 @@ const fruits = [
 ];
 
 export default function App() {
+  const period = useMemo<[Date, Date]>(() => [new Date(2024, 11, 15), new Date(2025, 0, 15)], []);
   const [arcData, setArcData] = useState<ArcData>(0);
   const [barChartData, setBarChartData] = useState<BarChartData>([]);
+  const [lineChartData, setLineChartData] = useState<LineChartData>([]);
   const [pieChartData, setPieChartData] = useState<PieChartData>([]);
 
   const generateArcData = useCallback(() => {
-    const data = Math.random();
-    setArcData(data);
+    setArcData(Math.random());
   }, []);
 
   const generateBarChartData = useCallback(() => {
@@ -32,6 +35,23 @@ export default function App() {
 
     setBarChartData(data);
   }, []);
+
+  const generateLineChartData = useCallback(() => {
+    const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
+
+    const data = structuredClone(fruits)
+      .reverse()
+      .map((path, i) => ({
+        ...path,
+        dates: dates.map((date) => {
+          // iが0: 0～20、1: 20～40、2: 40～60、3: 60～80、4: 80～100の範囲で乱数を生成する
+          const value = Math.random() * 20 + 20 * i;
+          return { date, value };
+        }),
+      }));
+
+    setLineChartData(data);
+  }, [period]);
 
   const generatePieChartData = useCallback(() => {
     const data = fruits.map((fruit) => ({ ...fruit, value: Math.random() * 100 }));
@@ -42,8 +62,9 @@ export default function App() {
   const generateData = useCallback(() => {
     generateArcData();
     generateBarChartData();
+    generateLineChartData();
     generatePieChartData();
-  }, [generateArcData, generateBarChartData, generatePieChartData]);
+  }, [generateArcData, generateBarChartData, generateLineChartData, generatePieChartData]);
 
   useEffect(() => {
     generateData();
@@ -63,12 +84,16 @@ export default function App() {
           <Arc data={arcData} />
         </section>
         <section>
+          <h2>Pie Chart</h2>
+          <PieChart data={pieChartData} />
+        </section>
+        <section>
           <h2>Bar Chart</h2>
           <BarChart data={barChartData} />
         </section>
         <section>
-          <h2>Pie Chart</h2>
-          <PieChart data={pieChartData} />
+          <h2>Line Chart</h2>
+          <LineChart data={lineChartData} period={period} />
         </section>
       </main>
     </>

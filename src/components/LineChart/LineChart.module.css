@@ -1,0 +1,50 @@
+.lineChart {
+  position: relative;
+}
+
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+
+.line[data-id='apple'] {
+  stroke: #ff725c;
+}
+
+.line[data-id='blueberry'] {
+  stroke: #4269d0;
+}
+
+.line[data-id='grape'] {
+  stroke: #a463f2;
+}
+
+.line[data-id='muscat'] {
+  stroke: #3ca951;
+}
+
+.line[data-id='orange'] {
+  stroke: #efb118;
+}
+
+.frame {
+  stroke: #ccc;
+}
+
+.label {
+  font-size: 12px;
+}
+
+.axisX .label {
+  text-anchor: middle;
+  transform: translate(0, -0.3em);
+}
+
+.axisX g:first-child .label {
+  text-anchor: start;
+}
+
+.axisY .label {
+  text-anchor: end;
+  transform: translate(-8px, 0.3em);
+}
