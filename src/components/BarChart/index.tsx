@@ -4,7 +4,8 @@ import * as d3 from 'd3';
 import styles from './BarChart.module.css';
 
 export type BarChartData = {
-  name: string;
+  id: string;
+  label: string;
   value: number;
 }[];
 
@@ -29,14 +30,14 @@ export function BarChart({ data, height = 240, width = 640, ...props }: Props) {
   const y = useMemo(() => {
     return d3
       .scaleBand()
-      .domain(d3.sort(sortedData, (d) => -d.value).map((d) => d.name))
+      .domain(d3.sort(sortedData, (d) => -d.value).map((d) => d.label))
       .rangeRound([margin.top, height])
       .padding(0.25);
   }, [height, margin.top, sortedData]);
 
   const barData = useMemo(() => {
     return sortedData.map((d) => {
-      return { ...d, x: x(0), y: y(d.name), width: x(d.value) - x(0), height: y.bandwidth() };
+      return { ...d, x: x(0), y: y(d.label), width: x(d.value) - x(0), height: y.bandwidth() };
     });
   }, [sortedData, x, y]);
 
@@ -69,7 +70,7 @@ export function BarChart({ data, height = 240, width = 640, ...props }: Props) {
         </g>
         <g className={styles.bars}>
           {barData.map((data) => (
-            <rect key={data.name} x={data.x} y={data.y} width={data.width} height={data.height} />
+            <rect key={data.id} x={data.x} y={data.y} width={data.width} height={data.height} />
           ))}
         </g>
       </svg>

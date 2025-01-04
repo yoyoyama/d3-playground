@@ -4,7 +4,8 @@ import * as d3 from 'd3';
 import styles from './PieChart.module.css';
 
 export type PieChartData = {
-  name: string;
+  id: string;
+  label: string;
   value: number;
 }[];
 
@@ -46,7 +47,7 @@ export function PieChart({ data, size = 240, ...props }: Props) {
       <svg width={size} height={size}>
         <g transform={`translate(${size / 2}, ${size / 2})`}>
           {pieData.map((data) => (
-            <path key={data.name} d={data.d} data-name={data.name} className={styles.path} />
+            <path key={data.id} d={data.d} data-id={data.id} className={styles.path} />
           ))}
         </g>
       </svg>

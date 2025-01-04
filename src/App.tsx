@@ -9,7 +9,13 @@ import type { PieChartData } from './components/PieChart';
 
 import styles from './App.module.css';
 
-const fruits = ['Apple', 'Blueberry', 'Grape', 'Muscat', 'Orange'];
+const fruits = [
+  { id: 'apple', label: 'Apple' },
+  { id: 'blueberry', label: 'Blueberry' },
+  { id: 'grape', label: 'Grape' },
+  { id: 'muscat', label: 'Muscat' },
+  { id: 'orange', label: 'Orange' },
+];
 
 export default function App() {
   const [arcData, setArcData] = useState<ArcData>(0);
@@ -22,12 +28,14 @@ export default function App() {
   }, []);
 
   const generateBarChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ name: fruit, value: Math.random() * 100 }));
+    const data = fruits.map((fruit) => ({ ...fruit, value: Math.random() * 100 }));
+
     setBarChartData(data);
   }, []);
 
   const generatePieChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ name: fruit, value: Math.random() * 100 }));
+    const data = fruits.map((fruit) => ({ ...fruit, value: Math.random() * 100 }));
+
     setPieChartData(data);
   }, []);
 
