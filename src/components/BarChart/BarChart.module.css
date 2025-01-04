@@ -1,0 +1,27 @@
+.barChart {
+  position: relative;
+}
+
+svg {
+  overflow: visible;
+}
+
+.bars rect {
+  fill: #4269d0;
+}
+
+.axisX line {
+  stroke: #ddd;
+}
+
+.axisX text {
+  font-size: 12px;
+  text-anchor: middle;
+  transform: translate(0, 1em);
+}
+
+.axisY text {
+  font-size: 12px;
+  text-anchor: end;
+  transform: translate(-8px, 0.3em);
+}
