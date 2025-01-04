@@ -3,10 +3,10 @@ import * as d3 from 'd3';
 
 import styles from './Arc.module.css';
 
-export type Data = number;
+export type ArcData = number;
 
 type Props = ComponentPropsWithoutRef<'svg'> & {
-  data: Data;
+  data: ArcData;
   size?: number;
 };
 

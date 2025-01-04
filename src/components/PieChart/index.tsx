@@ -3,13 +3,13 @@ import * as d3 from 'd3';
 
 import styles from './PieChart.module.css';
 
-export type Data = {
+export type PieChartData = {
   name: string;
   value: number;
 }[];
 
 type Props = ComponentPropsWithoutRef<'svg'> & {
-  data: Data;
+  data: PieChartData;
   size?: number;
 };
 

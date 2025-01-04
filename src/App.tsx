@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { Arc } from './components/Arc';
 import { PieChart } from './components/PieChart';
-import type { Data as ArcData } from './components/Arc';
-import type { Data as PieChartData } from './components/PieChart';
+import type { ArcData } from './components/Arc';
+import type { PieChartData } from './components/PieChart';
 
 import styles from './App.module.css';
 
