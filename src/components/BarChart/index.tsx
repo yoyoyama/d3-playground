@@ -17,7 +17,7 @@ type Props = ComponentPropsWithoutRef<'div'> & {
   width?: number;
 };
 
-export function BarChart({ data, height = 240, width = 640, ...props }: Props) {
+export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
   const margin = { top: 16, left: 64 };
 
   const x = useMemo(() => {

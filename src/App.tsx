@@ -71,31 +71,31 @@ export default function App() {
   }, [generateData]);
 
   return (
-    <>
+    <div className={styles.page}>
       <header className={styles.header}>
-        <h1>d3-playground</h1>
-        <button type="button" onClick={generateData}>
+        <h1 className={styles.pageTitle}>d3-playground</h1>
+        <button type="button" className={styles.button} onClick={generateData}>
           Regenerate Data
         </button>
       </header>
       <main className={styles.main}>
         <section>
-          <h2>Arc Chart</h2>
+          <h2 className={styles.title}>Arc Chart</h2>
           <ArcChart data={arcChartData} />
         </section>
         <section>
-          <h2>Pie Chart</h2>
+          <h2 className={styles.title}>Pie Chart</h2>
           <PieChart data={pieChartData} />
         </section>
         <section>
-          <h2>Bar Chart</h2>
+          <h2 className={styles.title}>Bar Chart</h2>
           <BarChart data={barChartData} />
         </section>
         <section>
-          <h2>Line Chart</h2>
+          <h2 className={styles.title}>Line Chart</h2>
           <LineChart data={lineChartData} period={period} />
         </section>
       </main>
-    </>
+    </div>
   );
 }

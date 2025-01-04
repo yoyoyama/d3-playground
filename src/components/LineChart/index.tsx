@@ -21,7 +21,7 @@ type Props = ComponentPropsWithoutRef<'div'> & {
   width?: number;
 };
 
-export function LineChart({ data, height = 240, period, width = 1056, ...props }: Props) {
+export function LineChart({ data, height = 240, period, width = 920, ...props }: Props) {
   const margin = { bottom: 24, left: 32 };
 
   const x = useMemo(() => {

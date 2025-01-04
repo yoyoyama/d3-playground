@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "format": "prettier --write **/*.{js,ts,tsx,json,md}",
+    "format": "prettier --write **/*.{html,css,js,ts,tsx,json,md}",
     "preview": "vite preview"
   },
   "dependencies": {
     "d3": "^7.9.0",
+    "minireset.css": "^0.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

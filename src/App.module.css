@@ -1,11 +1,50 @@
+.page {
+  display: grid;
+  grid-template-rows: minmax(0, auto) minmax(0, 1fr);
+  min-height: 100svh;
+  position: relative;
+}
+
 .header {
   align-items: center;
+  backdrop-filter: blur(40px);
+  background: rgba(255, 255, 255, 0.8);
   display: flex;
   gap: 24px;
+  justify-content: center;
+  padding: 16px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.button {
+  background: #000;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px;
 }
 
 .main {
+  align-content: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 24px 48px;
+  gap: 32px;
+  justify-content: center;
+  padding: 24px 40px 40px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
