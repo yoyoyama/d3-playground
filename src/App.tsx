@@ -31,7 +31,7 @@ export default function App() {
   }, []);
 
   const generateBarChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ ...fruit, value: Math.random() * 100 }));
+    const data = fruits.map((fruit) => ({ ...fruit, value: Math.round(Math.random() * 3000) }));
 
     setBarChartData(data);
   }, []);
@@ -39,22 +39,22 @@ export default function App() {
   const generateLineChartData = useCallback(() => {
     const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
 
-    const data = structuredClone(fruits)
-      .reverse()
-      .map((path, i) => ({
-        ...path,
-        dates: dates.map((date) => {
-          // iが0: 0～20、1: 20～40、2: 40～60、3: 60～80、4: 80～100の範囲で乱数を生成する
-          const value = Math.random() * 20 + 20 * i;
-          return { date, value };
-        }),
-      }));
+    const data = dates.map((date) => {
+      const items = structuredClone(fruits)
+        .reverse()
+        .map((path, i) => ({
+          ...path,
+          value: Math.round(Math.random() * 1000) + i * 500, // iが0: 0～1000、1: 500～1500、2: 1000～2000、3: 1500～2500、4: 2000～3000の範囲で乱数を生成する
+        }));
+
+      return { date, items };
+    });
 
     setLineChartData(data);
   }, [period]);
 
   const generatePieChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ ...fruit, value: Math.random() * 100 }));
+    const data = fruits.map((fruit) => ({ ...fruit, value: Math.round(Math.random() * 3000) }));
 
     setPieChartData(data);
   }, []);
@@ -79,20 +79,20 @@ export default function App() {
         </button>
       </header>
       <main className={styles.main}>
-        <section>
-          <h2 className={styles.title}>Arc Chart</h2>
+        <section className={styles.section}>
+          <h2 className={styles.heading}>Arc Chart</h2>
           <ArcChart data={arcChartData} />
         </section>
-        <section>
-          <h2 className={styles.title}>Pie Chart</h2>
+        <section className={styles.section}>
+          <h2 className={styles.heading}>Pie Chart</h2>
           <PieChart data={pieChartData} />
         </section>
-        <section>
-          <h2 className={styles.title}>Bar Chart</h2>
+        <section className={styles.section}>
+          <h2 className={styles.heading}>Bar Chart</h2>
           <BarChart data={barChartData} />
         </section>
-        <section>
-          <h2 className={styles.title}>Line Chart</h2>
+        <section className={styles.section}>
+          <h2 className={styles.heading}>Line Chart</h2>
           <LineChart data={lineChartData} period={period} />
         </section>
       </main>

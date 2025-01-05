@@ -1,0 +1,15 @@
+.tooltip {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  border-width: 1px 3px 3px 1px;
+  font-size: 12px;
+  left: 0;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transform: translate(16px, 0);
+  width: max-content;
+  z-index: 10;
+}

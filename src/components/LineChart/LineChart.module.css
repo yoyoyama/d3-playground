@@ -29,7 +29,12 @@
 
 .marker {
   fill: #fff;
+  opacity: 0;
   stroke-width: 2px;
+}
+
+.markerGroup[data-active='true'] .marker {
+  opacity: 1;
 }
 
 .marker[data-id='apple'] {
@@ -52,6 +57,20 @@
   stroke: #efb118;
 }
 
+.pointer {
+  fill: transparent;
+}
+
+.markerGroup[data-active='true'] .pointerLine {
+  opacity: 1;
+}
+
+.pointerLine {
+  opacity: 0;
+  pointer-events: none;
+  stroke: #ccc;
+}
+
 .frame {
   stroke: #ccc;
 }
@@ -72,4 +91,47 @@
 .axisY .label {
   text-anchor: end;
   transform: translate(-8px, 0.3em);
+}
+
+.tooltipDate {
+  margin-bottom: 4px;
+}
+
+.tooltipList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipItem {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.tooltipItem::before {
+  content: '';
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+}
+
+.tooltipItem[data-id='apple']::before {
+  background: #ff725c;
+}
+
+.tooltipItem[data-id='blueberry']::before {
+  background: #4269d0;
+}
+
+.tooltipItem[data-id='grape']::before {
+  background: #a463f2;
+}
+
+.tooltipItem[data-id='muscat']::before {
+  background: #3ca951;
+}
+
+.tooltipItem[data-id='orange']::before {
+  background: #efb118;
 }

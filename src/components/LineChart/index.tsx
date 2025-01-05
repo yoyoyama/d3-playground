@@ -1,17 +1,17 @@
-import { ComponentPropsWithoutRef, useMemo } from 'react';
+import { ComponentPropsWithoutRef, useCallback, useMemo, useState } from 'react';
 import * as d3 from 'd3';
 
 import styles from './LineChart.module.css';
+import { Tooltip } from '../Tooltip';
 
 type Day = {
   date: Date;
-  value: number;
+  value: number | null;
 };
 
 export type LineChartData = {
-  id: string;
-  label: string;
-  dates: Day[];
+  date: Date;
+  items: { id: string; label: string; value: number }[];
 }[];
 
 type Props = ComponentPropsWithoutRef<'div'> & {
@@ -22,14 +22,25 @@ type Props = ComponentPropsWithoutRef<'div'> & {
 };
 
 export function LineChart({ data, height = 240, period, width = 920, ...props }: Props) {
+  const [focusedTime, setFocusedTime] = useState<number | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const margin = { bottom: 24, left: 32 };
 
   const x = useMemo(() => {
     return d3.scaleTime().domain(period).range([margin.left, width]);
   }, [margin.left, period, width]);
 
+  const xStepWidth = useMemo(() => {
+    // 日付が1つしかない場合は全体の幅を返す
+    if (data.length < 2) {
+      return width - margin.left;
+    }
+
+    return Math.ceil(x(data[1].date) - x(data[0].date));
+  }, [data, margin.left, width, x]);
+
   const y = useMemo(() => {
-    const max = d3.max(data, (datum) => d3.max(datum.dates, (day) => day.value) ?? 0) ?? 0;
+    const max = d3.max(data, (datum) => d3.max(datum.items, (item) => item.value) ?? 0) ?? 0;
 
     return d3
       .scaleLinear()
@@ -38,33 +49,47 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
       .nice();
   }, [data, height, margin.bottom]);
 
+  const dataByLine = useMemo(() => {
+    // 1個目のデータのitemsを元にlineの配列を作る
+    const lines = data.at(0)?.items.map((item) => ({ id: item.id, label: item.label })) ?? [];
+
+    return lines.map((line) => {
+      return {
+        id: line.id,
+        label: line.label,
+        dates: data.map((datum) => {
+          const item = datum.items.find((item) => item.id === line.id);
+          return { date: datum.date, value: item?.value ?? null };
+        }),
+      };
+    });
+  }, [data]);
+
   const line = useMemo(() => {
     return d3
       .line<Day>()
+      .defined((datum) => datum.value !== null)
       .x((datum) => x(datum.date))
-      .y((datum) => y(datum.value));
+      .y((datum) => y(datum.value ?? 0));
   }, [x, y]);
 
   const lineData = useMemo(() => {
-    return data.map((datum) => {
+    return dataByLine.map((datum) => {
       return { id: datum.id, label: datum.label, d: line(datum.dates) ?? '' };
     });
-  }, [data, line]);
+  }, [dataByLine, line]);
 
   const markerData = useMemo(() => {
     return data.map((datum) => {
       return {
-        id: datum.id,
-        dates: datum.dates.map((day) => {
-          return {
-            id: `${day.date.getFullYear()}${day.date.getMonth()}${day.date.getDate()}`,
-            x: x(day.date),
-            y: y(day.value),
-          };
+        id: datum.date.getTime(),
+        items: datum.items.map((item) => {
+          return { ...item, x: x(datum.date), y: y(item.value) };
         }),
+        line: { x: x(datum.date), y: 0, height: height - margin.bottom },
       };
     });
-  }, [data, x, y]);
+  }, [data, height, margin.bottom, x, y]);
 
   const axisXData = useMemo(() => {
     return x.ticks(5).map((datum, i, array) => {
@@ -75,15 +100,47 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
         options.year = 'numeric';
       }
 
-      const label = datum.toLocaleString('ja-JP', options);
-
-      return { label, x: x(datum) };
+      return { label: datum.toLocaleString('ja-JP', options), x: x(datum) };
     });
   }, [x]);
 
   const axisYData = useMemo(() => {
     return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
   }, [y]);
+
+  const tooltipData = useMemo(() => {
+    if (!focusedTime) return;
+
+    const selectedData = data.find((datum) => datum.date.getTime() === focusedTime);
+
+    if (!selectedData) return;
+
+    return {
+      date: selectedData.date.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }),
+      items: selectedData.items.map((datum) => {
+        return { ...datum, value: datum.value.toLocaleString('ja-JP') };
+      }),
+    };
+  }, [data, focusedTime]);
+
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+      const date = x.invert(d3.pointer(event)[0] + xStepWidth / 2);
+      date.setHours(0, 0, 0, 0);
+
+      setFocusedTime(date.getTime());
+      setTooltipPosition({ x: event.clientX, y: event.clientY });
+    },
+    [x, xStepWidth],
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setFocusedTime(null);
+  }, []);
 
   return (
     <div className={styles.barChart} {...props}>
@@ -117,22 +174,51 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
         </g>
         <g>
           {markerData.map((datum) => (
-            <g key={datum.id}>
-              {datum.dates.map((day) => (
+            <g key={datum.id} data-active={datum.id === focusedTime} className={styles.markerGroup}>
+              <line
+                x1={datum.line.x}
+                x2={datum.line.x}
+                y1={datum.line.y}
+                y2={datum.line.height}
+                className={styles.pointerLine}
+              />
+              {datum.items.map((item) => (
                 <circle
-                  key={day.id}
-                  cx={day.x}
-                  cy={day.y}
+                  key={item.id}
+                  cx={item.x}
+                  cy={item.y}
                   r={3}
-                  data-id={datum.id}
-                  data-date={day.id}
+                  data-id={item.id}
                   className={styles.marker}
                 />
               ))}
             </g>
           ))}
         </g>
+        <g>
+          <rect
+            x={margin.left}
+            y={0}
+            width={width - margin.left}
+            height={height - margin.bottom}
+            className={styles.pointer}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          />
+        </g>
       </svg>
+      {tooltipData && (
+        <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+          <p className={styles.tooltipDate}>{tooltipData.date}</p>
+          <ul className={styles.tooltipList}>
+            {tooltipData.items?.map((datum) => (
+              <li key={datum.id} data-id={datum.id} className={styles.tooltipItem}>
+                {datum.label}: {datum.value}
+              </li>
+            ))}
+          </ul>
+        </Tooltip>
+      )}
     </div>
   );
 }
