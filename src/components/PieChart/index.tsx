@@ -79,7 +79,7 @@ export function PieChart({ data, size = 240, ...props }: Props) {
         </g>
       </svg>
       {tooltipIsVisible && (
-        <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+        <Tooltip x={tooltipPosition.x} y={tooltipPosition.y}>
           <ul className={styles.tooltipList}>
             {tooltipData.map((datum) => (
               <li key={datum.id} data-id={datum.id} className={styles.tooltipItem}>

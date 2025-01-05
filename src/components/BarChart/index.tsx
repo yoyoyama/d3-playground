@@ -137,7 +137,7 @@ export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
         </g>
       </svg>
       {tooltipData && (
-        <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+        <Tooltip x={tooltipPosition.x} y={tooltipPosition.y}>
           <p>{tooltipData}</p>
         </Tooltip>
       )}

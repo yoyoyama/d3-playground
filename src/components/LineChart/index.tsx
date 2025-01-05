@@ -208,7 +208,7 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
         </g>
       </svg>
       {tooltipData && (
-        <Tooltip style={{ left: tooltipPosition.x, top: tooltipPosition.y }}>
+        <Tooltip x={tooltipPosition.x} y={tooltipPosition.y}>
           <p className={styles.tooltipDate}>{tooltipData.date}</p>
           <ul className={styles.tooltipList}>
             {tooltipData.items?.map((datum) => (
