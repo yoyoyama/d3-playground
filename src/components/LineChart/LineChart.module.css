@@ -27,6 +27,31 @@
   stroke: #efb118;
 }
 
+.marker {
+  fill: #fff;
+  stroke-width: 2px;
+}
+
+.marker[data-id='apple'] {
+  stroke: #ff725c;
+}
+
+.marker[data-id='blueberry'] {
+  stroke: #4269d0;
+}
+
+.marker[data-id='grape'] {
+  stroke: #a463f2;
+}
+
+.marker[data-id='muscat'] {
+  stroke: #3ca951;
+}
+
+.marker[data-id='orange'] {
+  stroke: #efb118;
+}
+
 .frame {
   stroke: #ccc;
 }

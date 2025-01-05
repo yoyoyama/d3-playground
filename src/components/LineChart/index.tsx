@@ -38,14 +38,31 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
       .nice();
   }, [data, height, margin.bottom]);
 
-  const pathData = useMemo(() => {
-    return data.map((path) => {
-      const line = d3
-        .line<Day>()
-        .x((datum) => x(datum.date))
-        .y((datum) => y(datum.value));
+  const line = useMemo(() => {
+    return d3
+      .line<Day>()
+      .x((datum) => x(datum.date))
+      .y((datum) => y(datum.value));
+  }, [x, y]);
 
-      return { ...path, d: line(path.dates) ?? '' };
+  const lineData = useMemo(() => {
+    return data.map((datum) => {
+      return { id: datum.id, label: datum.label, d: line(datum.dates) ?? '' };
+    });
+  }, [data, line]);
+
+  const markerData = useMemo(() => {
+    return data.map((datum) => {
+      return {
+        id: datum.id,
+        dates: datum.dates.map((day) => {
+          return {
+            id: `${day.date.getFullYear()}${day.date.getMonth()}${day.date.getDate()}`,
+            x: x(day.date),
+            y: y(day.value),
+          };
+        }),
+      };
     });
   }, [data, x, y]);
 
@@ -72,9 +89,9 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
     <div className={styles.barChart} {...props}>
       <svg width={width} height={height}>
         <g className={styles.axisX}>
-          {axisXData.map((data) => (
-            <g key={data.label} transform={`translate(${data.x},${height})`}>
-              <text className={styles.label}>{data.label}</text>
+          {axisXData.map((datum) => (
+            <g key={datum.label} transform={`translate(${datum.x},${height})`}>
+              <text className={styles.label}>{datum.label}</text>
             </g>
           ))}
           <line
@@ -86,16 +103,33 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
           />
         </g>
         <g className={styles.axisY} transform={`translate(${margin.left},0)`}>
-          {axisYData.map((data) => (
-            <g key={data.label} transform={`translate(0,${data.y})`}>
-              <text className={styles.label}>{data.label}</text>
+          {axisYData.map((datum) => (
+            <g key={datum.label} transform={`translate(0,${datum.y})`}>
+              <text className={styles.label}>{datum.label}</text>
             </g>
           ))}
           <line x1={0} x2={0} y1={0} y2={height - margin.bottom} className={styles.frame} />
         </g>
         <g>
-          {pathData.map((data) => (
-            <path key={data.id} d={data.d} data-id={data.id} className={styles.line} />
+          {lineData.map((datum) => (
+            <path key={datum.id} d={datum.d} data-id={datum.id} className={styles.line} />
+          ))}
+        </g>
+        <g>
+          {markerData.map((datum) => (
+            <g key={datum.id}>
+              {datum.dates.map((day) => (
+                <circle
+                  key={day.id}
+                  cx={day.x}
+                  cy={day.y}
+                  r={3}
+                  data-id={datum.id}
+                  data-date={day.id}
+                  className={styles.marker}
+                />
+              ))}
+            </g>
           ))}
         </g>
       </svg>
