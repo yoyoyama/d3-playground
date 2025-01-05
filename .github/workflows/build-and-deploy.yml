@@ -35,7 +35,7 @@ jobs:
 
       - name: Build static files
         id: build
-        run: pnpm build
+        run: pnpm build --base=/d3-playground/
 
       - name: Upload static files as artifact
         id: deployment
