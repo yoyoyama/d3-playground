@@ -21,12 +21,16 @@ type Props = ComponentPropsWithoutRef<'div'> & {
 export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
   const [tooltipData, setTooltipData] = useState<string>('');
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const margin = { top: 16, left: 64 };
+  const margin = { top: 16, left: 64, right: 16 };
 
   const x = useMemo(() => {
     const max = d3.max(data, (datum) => datum.value) ?? 0;
-    return d3.scaleLinear().domain([0, max]).range([margin.left, width]).nice();
-  }, [margin.left, data, width]);
+    return d3
+      .scaleLinear()
+      .domain([0, max])
+      .range([margin.left, width - margin.right])
+      .nice();
+  }, [data, margin.left, margin.right, width]);
 
   const y = useMemo(() => {
     return d3
@@ -34,7 +38,7 @@ export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
       .domain(d3.sort(data, (datum) => -datum.value).map((datum) => datum.label))
       .rangeRound([margin.top, height])
       .padding(0.3);
-  }, [height, margin.top, data]);
+  }, [data, height, margin.top]);
 
   const barData = useMemo(() => {
     return data.map((datum) => {
@@ -66,11 +70,11 @@ export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
         ...datum,
         x: x(0),
         y: (y(datum.label) ?? 0) - (pointerHeight - barHeight) / 2,
-        width: width - margin.left,
+        width: width - margin.left - margin.right,
         height: pointerHeight,
       };
     });
-  }, [data, margin.left, width, x, y]);
+  }, [data, margin.left, margin.right, width, x, y]);
 
   const handleMouseEnter = useCallback((event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
     const label = event.currentTarget.dataset.label;

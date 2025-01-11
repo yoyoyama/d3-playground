@@ -24,7 +24,7 @@ type Props = ComponentPropsWithoutRef<'div'> & {
 export function LineChart({ data, height = 240, period, width = 920, ...props }: Props) {
   const [focusedTime, setFocusedTime] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const margin = { bottom: 24, left: 32 };
+  const margin = { bottom: 24, left: 40 };
 
   const x = useMemo(() => {
     return d3.scaleTime().domain(period).range([margin.left, width]);
