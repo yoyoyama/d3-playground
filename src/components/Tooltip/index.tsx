@@ -1,6 +1,7 @@
 import { ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react';
 
 import styles from './Tooltip.module.css';
+import { createPortal } from 'react-dom';
 
 type Props = ComponentPropsWithoutRef<'div'> & {
   offset?: number;
@@ -29,7 +30,7 @@ export function Tooltip({ children, offset = 16, style, x, y, ...props }: Props)
     setTooltipStyle(newTooltipStyle);
   }, [x, y, offset]);
 
-  return (
+  return createPortal(
     <div
       className={styles.tooltip}
       ref={tooltipRef}
@@ -37,6 +38,7 @@ export function Tooltip({ children, offset = 16, style, x, y, ...props }: Props)
       {...props}
     >
       {children}
-    </div>
+    </div>,
+    document.body,
   );
 }
