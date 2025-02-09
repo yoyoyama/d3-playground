@@ -2,6 +2,10 @@ body {
   min-width: 1000px;
 }
 
+img {
+  display: block;
+}
+
 svg {
   overflow: visible;
 }

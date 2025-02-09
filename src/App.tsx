@@ -10,6 +10,7 @@ import type { LineChartData } from './components/LineChart';
 import type { PieChartData } from './components/PieChart';
 
 import styles from './App.module.css';
+import githubIcon from './assets/img/github.svg';
 
 const fruits = [
   { id: 'apple', label: 'Apple' },
@@ -96,6 +97,11 @@ export default function App() {
           <LineChart data={lineChartData} period={period} />
         </section>
       </main>
+      <footer className={styles.footer}>
+        <a href="https://github.com/yoyoyama/d3-playground">
+          <img src={githubIcon} width="24" height="24" alt="" />
+        </a>
+      </footer>
     </div>
   );
 }
