@@ -1,4 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+html {
+  color: #000;
+  font-family: 'Roboto Mono', monospace;
+  font-optical-sizing: auto;
+  font-size: 14px;
+  line-break: strict;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  scroll-behavior: smooth;
+}
+
 body {
+  background: #fff;
   min-width: 1000px;
 }
 

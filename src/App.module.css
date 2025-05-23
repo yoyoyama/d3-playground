@@ -31,7 +31,8 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  padding: 12px;
+  line-height: 1.4285714285;
+  padding: 10px 12px;
 }
 
 .main {
