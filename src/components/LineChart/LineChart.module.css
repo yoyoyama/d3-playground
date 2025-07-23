@@ -27,14 +27,17 @@
   stroke: #efb118;
 }
 
-.marker {
-  fill: #fff;
+.markerGroup {
   opacity: 0;
-  stroke-width: 2px;
 }
 
-.markerGroup[data-active='true'] .marker {
+.markerGroup[data-active='true'] {
   opacity: 1;
+}
+
+.marker {
+  fill: #fff;
+  stroke-width: 2px;
 }
 
 .marker[data-id='apple'] {
@@ -61,12 +64,7 @@
   fill: transparent;
 }
 
-.markerGroup[data-active='true'] .pointerLine {
-  opacity: 1;
-}
-
 .pointerLine {
-  opacity: 0;
   pointer-events: none;
   stroke: #ccc;
 }

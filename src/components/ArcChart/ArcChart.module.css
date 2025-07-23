@@ -6,6 +6,10 @@
   fill: #eee;
 }
 
+.frontArc {
+  fill: #000;
+}
+
 .frontArc[data-status='good'] {
   fill: #3ca951;
 }

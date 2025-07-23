@@ -143,7 +143,7 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
   }, []);
 
   return (
-    <div className={styles.barChart} {...props}>
+    <div className={styles.lineChart} {...props}>
       <svg width={width} height={height}>
         <g className={styles.axisX}>
           {axisXData.map((datum) => (
