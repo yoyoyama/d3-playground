@@ -24,7 +24,7 @@ const fruits = [
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
-const to = new Date(today.getFullYear(), today.getMonth(), 2); // 前月の最終日
+const to = new Date(today.getFullYear(), today.getMonth(), 0); // 前月の最終日
 const from = new Date(to.getFullYear(), to.getMonth(), 1); // 前月の初日
 const period: [Date, Date] = [from, to];
 
