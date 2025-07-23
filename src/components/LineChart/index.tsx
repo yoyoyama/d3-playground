@@ -92,13 +92,8 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
   }, [data, height, margin.bottom, x, y]);
 
   const axisXData = useMemo(() => {
-    return x.ticks(5).map((datum, i, array) => {
+    return x.ticks(5).map((datum) => {
       const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit' };
-
-      // iが0 or ひとつ前のdと年が異なる場合はラベルに年も表示する
-      if (i === 0 || datum.getFullYear() !== array[i - 1].getFullYear()) {
-        options.year = 'numeric';
-      }
 
       return { label: datum.toLocaleString('ja-JP', options), x: x(datum) };
     });
