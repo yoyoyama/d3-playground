@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { ArcChart } from './components/ArcChart';
 import { BarChart } from './components/BarChart';
 import { LineChart } from './components/LineChart';
 import { PieChart } from './components/PieChart';
+import { StackedBarChart } from './components/StackedBarChart';
 import type { ArcChartData } from './components/ArcChart';
 import type { BarChartData } from './components/BarChart';
 import type { LineChartData } from './components/LineChart';
 import type { PieChartData } from './components/PieChart';
+import type { StackedBarChartData } from './components/StackedBarChart';
 
 import styles from './App.module.css';
 import githubIcon from './assets/img/github.svg';
@@ -31,6 +33,7 @@ export default function App() {
   const [barChartData, setBarChartData] = useState<BarChartData>([]);
   const [lineChartData, setLineChartData] = useState<LineChartData>([]);
   const [pieChartData, setPieChartData] = useState<PieChartData>([]);
+  const [stackedBarChartData, setStackedBarChartData] = useState<StackedBarChartData>([]);
 
   const generateArcChartData = useCallback(() => {
     setArcChartData(Math.random());
@@ -49,9 +52,9 @@ export default function App() {
       const items = structuredClone(fruits)
         .reverse()
         .map((path, i) => ({
-          ...path,
+        ...path,
           value: Math.round(Math.random() * 1000) + i * 500, // iが0: 0～1000、1: 500～1500、2: 1000～2000、3: 1500～2500、4: 2000～3000の範囲で乱数を生成する
-        }));
+      }));
 
       return { date, items };
     });
@@ -65,12 +68,35 @@ export default function App() {
     setPieChartData(data);
   }, []);
 
+  const generateStackedBarChartData = useCallback(() => {
+    const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
+
+    const data = dates.map((date) => {
+      const items = structuredClone(fruits).map((path) => ({
+        ...path,
+        value: Math.round(Math.random() * 500),
+      }));
+      const total = items.reduce((sum, item) => sum + item.value, 0);
+
+      return { date, items, total };
+    });
+
+    setStackedBarChartData(data);
+  }, []);
+
   const generateData = useCallback(() => {
     generateArcChartData();
     generateBarChartData();
     generateLineChartData();
     generatePieChartData();
-  }, [generateArcChartData, generateBarChartData, generateLineChartData, generatePieChartData]);
+    generateStackedBarChartData();
+  }, [
+    generateArcChartData,
+    generateBarChartData,
+    generateLineChartData,
+    generatePieChartData,
+    generateStackedBarChartData,
+  ]);
 
   useEffect(() => {
     generateData();
@@ -100,6 +126,10 @@ export default function App() {
         <section className={styles.section}>
           <h2 className={styles.heading}>Line Chart</h2>
           <LineChart data={lineChartData} period={period} />
+        </section>
+        <section className={styles.section}>
+          <h2 className={styles.heading}>Stacked Bar Chart</h2>
+          <StackedBarChart data={stackedBarChartData} period={period} />
         </section>
       </main>
       <footer className={styles.footer}>

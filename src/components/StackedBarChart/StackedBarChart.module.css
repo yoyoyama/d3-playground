@@ -1,0 +1,97 @@
+.barChart {
+  position: relative;
+}
+
+.bar {
+  fill: #000;
+  pointer-events: none;
+}
+
+.bar[data-id='apple'] {
+  fill: #ff725c;
+}
+
+.bar[data-id='blueberry'] {
+  fill: #4269d0;
+}
+
+.bar[data-id='grape'] {
+  fill: #a463f2;
+}
+
+.bar[data-id='muscat'] {
+  fill: #3ca951;
+}
+
+.bar[data-id='orange'] {
+  fill: #efb118;
+}
+
+.pointer {
+  fill: transparent;
+}
+
+.pointer:hover {
+  fill: #eee;
+}
+
+.frame {
+  stroke: #ccc;
+}
+
+.label {
+  font-size: 12px;
+}
+
+.axisX .label {
+  text-anchor: middle;
+  transform: translate(0, -0.3em);
+}
+
+.axisY .label {
+  text-anchor: end;
+  transform: translate(-8px, 0.3em);
+}
+
+.tooltipDate {
+  margin-bottom: 4px;
+}
+
+.tooltipList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipItem {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.tooltipItem::before {
+  content: '';
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+}
+
+.tooltipItem[data-id='apple']::before {
+  background: #ff725c;
+}
+
+.tooltipItem[data-id='blueberry']::before {
+  background: #4269d0;
+}
+
+.tooltipItem[data-id='grape']::before {
+  background: #a463f2;
+}
+
+.tooltipItem[data-id='muscat']::before {
+  background: #3ca951;
+}
+
+.tooltipItem[data-id='orange']::before {
+  background: #efb118;
+}
