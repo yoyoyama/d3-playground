@@ -20,8 +20,13 @@ const fruits = [
   { id: 'orange', label: 'Orange' },
 ];
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const to = new Date(today.getFullYear(), today.getMonth(), 2); // 前月の最終日
+const from = new Date(to.getFullYear(), to.getMonth(), 1); // 前月の初日
+const period: [Date, Date] = [from, to];
+
 export default function App() {
-  const period = useMemo<[Date, Date]>(() => [new Date(2024, 11, 15), new Date(2025, 0, 15)], []);
   const [arcChartData, setArcChartData] = useState<ArcChartData>(0);
   const [barChartData, setBarChartData] = useState<BarChartData>([]);
   const [lineChartData, setLineChartData] = useState<LineChartData>([]);
@@ -52,7 +57,7 @@ export default function App() {
     });
 
     setLineChartData(data);
-  }, [period]);
+  }, []);
 
   const generatePieChartData = useCallback(() => {
     const data = fruits.map((fruit) => ({ ...fruit, value: Math.round(Math.random() * 3000) }));
