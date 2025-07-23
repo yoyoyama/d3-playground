@@ -49,11 +49,9 @@ export default function App() {
     const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
 
     const data = dates.map((date) => {
-      const items = structuredClone(fruits)
-        .reverse()
-        .map((path, i) => ({
+      const items = structuredClone(fruits).map((path, i, array) => ({
         ...path,
-          value: Math.round(Math.random() * 1000) + i * 500, // iが0: 0～1000、1: 500～1500、2: 1000～2000、3: 1500～2500、4: 2000～3000の範囲で乱数を生成する
+        value: Math.round(Math.random() * 1000) + (array.length - 1 - i) * 500,
       }));
 
       return { date, items };
