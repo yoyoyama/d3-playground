@@ -140,12 +140,7 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
   return (
     <div className={styles.lineChart} {...props}>
       <svg width={width} height={height}>
-        <g className={styles.axisX}>
-          {axisXData.map((datum) => (
-            <g key={datum.label} transform={`translate(${datum.x},${height})`}>
-              <text className={styles.label}>{datum.label}</text>
-            </g>
-          ))}
+        <g>
           <line
             x1={margin.left}
             x2={width}
@@ -153,6 +148,20 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
             y2={height - margin.bottom}
             className={styles.frame}
           />
+          <line
+            x1={margin.left}
+            x2={margin.left}
+            y1={0}
+            y2={height - margin.bottom}
+            className={styles.frame}
+          />
+        </g>
+        <g className={styles.axisX}>
+          {axisXData.map((datum) => (
+            <g key={datum.label} transform={`translate(${datum.x},${height})`}>
+              <text className={styles.label}>{datum.label}</text>
+            </g>
+          ))}
         </g>
         <g className={styles.axisY} transform={`translate(${margin.left},0)`}>
           {axisYData.map((datum) => (
@@ -160,7 +169,6 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
               <text className={styles.label}>{datum.label}</text>
             </g>
           ))}
-          <line x1={0} x2={0} y1={0} y2={height - margin.bottom} className={styles.frame} />
         </g>
         <g>
           {lineData.map((datum) => (

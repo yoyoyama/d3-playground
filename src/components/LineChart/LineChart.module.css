@@ -86,6 +86,14 @@
   text-anchor: start;
 }
 
+.axisX g:last-child .label {
+  text-anchor: end;
+}
+
+.axisX g:only-child .label {
+  text-anchor: middle;
+}
+
 .axisY .label {
   text-anchor: end;
   transform: translate(-8px, 0.3em);
