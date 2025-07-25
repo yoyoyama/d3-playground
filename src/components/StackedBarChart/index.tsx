@@ -23,23 +23,21 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
   const [focusedTime, setFocusedTime] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const margin = { bottom: 24, left: 40 };
-  const barWidth = 12;
+
+  const xBand = useMemo(() => {
+    const domain = d3.timeDay
+      .range(period[0], d3.timeDay.offset(period[1], 1))
+      .map((date) => String(date.getTime()));
+
+    return d3.scaleBand().domain(domain).range([margin.left, width]).paddingInner(0.5);
+  }, [margin.left, period, width]);
 
   const x = useMemo(() => {
     return d3
       .scaleTime()
-      .domain(period)
-      .range([margin.left + barWidth * 2, width - barWidth * 2]);
+      .domain([period[0], d3.timeDay.offset(period[1], 1)])
+      .range([margin.left, width]);
   }, [margin.left, period, width]);
-
-  const xStepWidth = useMemo(() => {
-    // 日付が1つしかない場合は全体の幅を返す
-    if (data.length < 2) {
-      return width - margin.left;
-    }
-
-    return Math.ceil(x(data[1].date) - x(data[0].date));
-  }, [data, margin.left, width, x]);
 
   const y = useMemo(() => {
     const max = d3.max(data, (datum) => datum.total) ?? 0;
@@ -66,32 +64,29 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
   const stackedData = useMemo(() => {
     return data.map((datum, dateIndex) => {
       return {
-        id: datum.date.toLocaleString('ja-JP', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-        }),
+        id: datum.date.getTime(),
         items: series.map((s, i) => {
           const d = s[dateIndex];
+          const width = xBand.bandwidth();
           return {
             id: categories[i],
-            x: x(datum.date) - barWidth / 2,
+            x: x(datum.date) + width / 2,
             y: y(d[1]),
-            width: barWidth,
+            width,
             height: y(d[0]) - y(d[1]),
           };
         }),
       };
     });
-  }, [barWidth, categories, data, series, x, y]);
+  }, [categories, data, series, x, xBand, y]);
 
   const axisXData = useMemo(() => {
     return x.ticks(5).map((datum) => {
       const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit' };
 
-      return { label: datum.toLocaleString('ja-JP', options), x: x(datum) };
+      return { label: datum.toLocaleString('ja-JP', options), x: x(datum) + xBand.step() / 2 };
     });
-  }, [x]);
+  }, [x, xBand]);
 
   const axisYData = useMemo(() => {
     return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
@@ -100,18 +95,14 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
   const pointerData = useMemo(() => {
     return data.map((datum) => {
       return {
-        id: datum.date.toLocaleString('ja-JP', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-        }),
-        x: x(datum.date) - xStepWidth / 2,
+        id: datum.date.getTime(),
+        x: x(datum.date),
         y: 0,
-        width: xStepWidth,
+        width: xBand.step(),
         height: height - margin.bottom,
       };
     });
-  }, [data, height, margin.bottom, x, xStepWidth]);
+  }, [data, height, margin.bottom, x, xBand]);
 
   const tooltipData = useMemo(() => {
     if (!focusedTime) return;
@@ -132,16 +123,14 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
     };
   }, [data, focusedTime]);
 
-  const handleMouseMove = useCallback(
-    (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-      const date = x.invert(d3.pointer(event)[0] + barWidth);
-      date.setHours(0, 0, 0, 0);
+  const handleMouseEnter = useCallback((event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+    const id = Number(event.currentTarget.dataset.id);
+    setFocusedTime(id);
+  }, []);
 
-      setFocusedTime(date.getTime());
-      setTooltipPosition({ x: event.clientX, y: event.clientY });
-    },
-    [x],
-  );
+  const handleMouseMove = useCallback((event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+    setTooltipPosition({ x: event.clientX, y: event.clientY });
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     setFocusedTime(null);
@@ -158,7 +147,9 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
               y={datum.y}
               width={datum.width}
               height={datum.height}
+              data-id={datum.id}
               className={styles.pointer}
+              onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             />
