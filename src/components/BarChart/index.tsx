@@ -36,7 +36,7 @@ export function BarChart({ data, height = 240, width = 376, ...props }: Props) {
     return d3
       .scaleBand()
       .domain(d3.sort(data, (datum) => -datum.value).map((datum) => datum.label))
-      .rangeRound([margin.top, height])
+      .range([margin.top, height])
       .padding(0.3);
   }, [data, height, margin.top]);
 
