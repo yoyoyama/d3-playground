@@ -53,7 +53,10 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
       .stack<Bar>()
       .keys(d3.union(categories))
       .order(d3.stackOrderReverse)
-      .value((d, key) => d.items.find((item) => item.id === key)?.value ?? 0)(data);
+      .value((d, key) => {
+        const item = d.items.find((item) => item.id === key);
+        return item?.value ?? 0;
+      })(data);
   }, [categories, data]);
 
   const stackedData = useMemo(() => {
@@ -92,7 +95,7 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
   }, [dates, x]);
 
   const axisYData = useMemo(() => {
-    return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
+    return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) }));
   }, [y]);
 
   const pointerData = useMemo(() => {
@@ -127,8 +130,8 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
   }, [data, focusedTime]);
 
   const handleMouseEnter = useCallback((event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-    const id = Number(event.currentTarget.dataset.id);
-    setFocusedTime(id);
+    const time = Number(event.currentTarget.dataset.id);
+    setFocusedTime(time);
   }, []);
 
   const handleMouseMove = useCallback((event: React.MouseEvent<SVGRectElement, MouseEvent>) => {

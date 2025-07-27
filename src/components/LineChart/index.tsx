@@ -50,6 +50,14 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
       .nice();
   }, [data, height, margin.bottom]);
 
+  const line = useMemo(() => {
+    return d3
+      .line<Day>()
+      .defined((datum) => datum.value !== null)
+      .x((datum) => x(datum.date))
+      .y((datum) => y(datum.value ?? 0));
+  }, [x, y]);
+
   const dataByLine = useMemo(() => {
     // 1個目のデータのitemsを元にlineの配列を作る
     const lines = data.at(0)?.items.map((item) => ({ id: item.id, label: item.label })) ?? [];
@@ -65,14 +73,6 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
       };
     });
   }, [data]);
-
-  const line = useMemo(() => {
-    return d3
-      .line<Day>()
-      .defined((datum) => datum.value !== null)
-      .x((datum) => x(datum.date))
-      .y((datum) => y(datum.value ?? 0));
-  }, [x, y]);
 
   const lineData = useMemo(() => {
     return dataByLine.map((datum) => {
@@ -106,7 +106,7 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
   }, [dates, x]);
 
   const axisYData = useMemo(() => {
-    return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
+    return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) }));
   }, [y]);
 
   const tooltipData = useMemo(() => {
