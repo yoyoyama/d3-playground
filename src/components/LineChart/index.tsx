@@ -30,14 +30,11 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
     return d3.scaleTime().domain(period).range([margin.left, width]);
   }, [margin.left, period, width]);
 
-  const xStepWidth = useMemo(() => {
-    // 日付が1つしかない場合は全体の幅を返す
-    if (data.length < 2) {
-      return width - margin.left;
-    }
+  const xBand = useMemo(() => {
+    const domain = d3.timeDay.range(period[0], period[1]).map((date) => date.getTime().toString());
 
-    return Math.ceil(x(data[1].date) - x(data[0].date));
-  }, [data, margin.left, width, x]);
+    return d3.scaleBand().domain(domain).range([margin.left, width]);
+  }, [margin.left, period, width]);
 
   const y = useMemo(() => {
     const max = d3.max(data, (datum) => d3.max(datum.items, (item) => item.value) ?? 0) ?? 0;
@@ -124,13 +121,13 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
-      const date = x.invert(d3.pointer(event)[0] + xStepWidth / 2);
+      const date = x.invert(d3.pointer(event)[0] + xBand.bandwidth() / 2);
       date.setHours(0, 0, 0, 0);
 
       setFocusedTime(date.getTime());
       setTooltipPosition({ x: event.clientX, y: event.clientY });
     },
-    [x, xStepWidth],
+    [x, xBand],
   );
 
   const handleMouseLeave = useCallback(() => {
