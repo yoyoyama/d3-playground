@@ -24,7 +24,11 @@ type Props = ComponentPropsWithoutRef<'div'> & {
 export function LineChart({ data, height = 240, period, width = 920, ...props }: Props) {
   const [focusedTime, setFocusedTime] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const margin = { bottom: 24, left: 40 };
+  const margin = { bottom: 36, left: 40 };
+
+  const dates = useMemo(() => {
+    return d3.timeDay.range(period[0], d3.timeDay.offset(period[1], 1));
+  }, [period]);
 
   const x = useMemo(() => {
     return d3.scaleTime().domain(period).range([margin.left, width]);
@@ -89,12 +93,17 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
   }, [data, height, margin.bottom, x, y]);
 
   const axisXData = useMemo(() => {
-    return x.ticks(5).map((datum) => {
-      const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit' };
+    return dates.map((date, i) => {
+      const label = { date: `${date.getDate()}`, yearMonth: '' };
 
-      return { label: datum.toLocaleString('ja-JP', options), x: x(datum) };
+      // 最初の要素 or 日付が1日の場合は年月も表示する
+      if (i === 0 || date.getDate() === 1) {
+        label.yearMonth = `${date.getFullYear()}/${date.getMonth() + 1}`;
+      }
+
+      return { id: date.getTime(), label, x: x(date) };
     });
-  }, [x]);
+  }, [dates, x]);
 
   const axisYData = useMemo(() => {
     return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
@@ -155,8 +164,11 @@ export function LineChart({ data, height = 240, period, width = 920, ...props }:
         </g>
         <g className={styles.axisX}>
           {axisXData.map((datum) => (
-            <g key={datum.label} transform={`translate(${datum.x},${height})`}>
-              <text className={styles.label}>{datum.label}</text>
+            <g key={datum.id} transform={`translate(${datum.x},${height - margin.bottom})`}>
+              <text className={styles.label}>{datum.label.date}</text>
+              {datum.label.yearMonth && (
+                <text className={styles.label}>{datum.label.yearMonth}</text>
+              )}
             </g>
           ))}
         </g>

@@ -22,22 +22,17 @@ type Props = ComponentPropsWithoutRef<'div'> & {
 export function StackedBarChart({ data, height = 240, period, width = 920, ...props }: Props) {
   const [focusedTime, setFocusedTime] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const margin = { bottom: 24, left: 40 };
+  const margin = { bottom: 36, left: 40 };
 
-  const xBand = useMemo(() => {
-    const domain = d3.timeDay
-      .range(period[0], d3.timeDay.offset(period[1], 1))
-      .map((date) => String(date.getTime()));
-
-    return d3.scaleBand().domain(domain).range([margin.left, width]).paddingInner(0.5);
-  }, [margin.left, period, width]);
+  const dates = useMemo(() => {
+    return d3.timeDay.range(period[0], d3.timeDay.offset(period[1], 1));
+  }, [period]);
 
   const x = useMemo(() => {
-    return d3
-      .scaleTime()
-      .domain([period[0], d3.timeDay.offset(period[1], 1)])
-      .range([margin.left, width]);
-  }, [margin.left, period, width]);
+    const domain = dates.map((date) => date.getTime().toString());
+
+    return d3.scaleBand().domain(domain).range([margin.left, width]).padding(0.5);
+  }, [margin.left, width, dates]);
 
   const y = useMemo(() => {
     const max = d3.max(data, (datum) => datum.total) ?? 0;
@@ -67,26 +62,34 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
         id: datum.date.getTime(),
         items: series.map((s, i) => {
           const d = s[dateIndex];
-          const width = xBand.bandwidth();
           return {
             id: categories[i],
-            x: x(datum.date) + width / 2,
+            x: x(datum.date.getTime().toString()),
             y: y(d[1]),
-            width,
+            width: x.bandwidth(),
             height: y(d[0]) - y(d[1]),
           };
         }),
       };
     });
-  }, [categories, data, series, x, xBand, y]);
+  }, [categories, data, series, x, y]);
 
   const axisXData = useMemo(() => {
-    return x.ticks(5).map((datum) => {
-      const options: Intl.DateTimeFormatOptions = { month: '2-digit', day: '2-digit' };
+    return dates.map((date, i) => {
+      const label = { date: `${date.getDate()}`, yearMonth: '' };
 
-      return { label: datum.toLocaleString('ja-JP', options), x: x(datum) + xBand.step() / 2 };
+      // 最初の要素 or 日付が1日の場合は年月も表示する
+      if (i === 0 || date.getDate() === 1) {
+        label.yearMonth = `${date.getFullYear()}/${date.getMonth() + 1}`;
+      }
+
+      return {
+        id: date.getTime(),
+        label,
+        x: (x(date.getTime().toString()) ?? 0) + x.bandwidth() / 2,
+      };
     });
-  }, [x, xBand]);
+  }, [dates, x]);
 
   const axisYData = useMemo(() => {
     return y.ticks(5).map((datum) => ({ label: datum, y: y(datum) ?? 0 }));
@@ -96,13 +99,13 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
     return data.map((datum) => {
       return {
         id: datum.date.getTime(),
-        x: x(datum.date),
+        x: (x(datum.date.getTime().toString()) ?? 0) - x.bandwidth() / 2,
         y: 0,
-        width: xBand.step(),
+        width: x.step(),
         height: height - margin.bottom,
       };
     });
-  }, [data, height, margin.bottom, x, xBand]);
+  }, [data, height, margin.bottom, x]);
 
   const tooltipData = useMemo(() => {
     if (!focusedTime) return;
@@ -173,8 +176,11 @@ export function StackedBarChart({ data, height = 240, period, width = 920, ...pr
         </g>
         <g className={styles.axisX}>
           {axisXData.map((datum) => (
-            <g key={datum.label} transform={`translate(${datum.x},${height})`}>
-              <text className={styles.label}>{datum.label}</text>
+            <g key={datum.id} transform={`translate(${datum.x},${height - margin.bottom})`}>
+              <text className={styles.label}>{datum.label.date}</text>
+              {datum.label.yearMonth && (
+                <text className={styles.label}>{datum.label.yearMonth}</text>
+              )}
             </g>
           ))}
         </g>

@@ -79,19 +79,11 @@
 
 .axisX .label {
   text-anchor: middle;
-  transform: translate(0, -0.3em);
+  transform: translate(0, 1.5em);
 }
 
-.axisX g:first-child .label {
-  text-anchor: start;
-}
-
-.axisX g:last-child .label {
-  text-anchor: end;
-}
-
-.axisX g:only-child .label {
-  text-anchor: middle;
+.axisX .label + .label {
+  transform: translate(0, 2.85em);
 }
 
 .axisY .label {
