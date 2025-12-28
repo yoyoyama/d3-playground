@@ -131,7 +131,7 @@ export default function App() {
         </section>
       </main>
       <footer className={styles.footer}>
-        <a href="https://github.com/yoyoyama/d3-playground">
+        <a href="https://github.com/moyoyama/d3-playground">
           <img src={githubIcon} width="24" height="24" alt="" />
         </a>
       </footer>
