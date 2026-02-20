@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react';
+import { ComponentPropsWithoutRef, useLayoutEffect, useRef } from 'react';
 
 import styles from './Tooltip.module.css';
 import { createPortal } from 'react-dom';
@@ -9,11 +9,10 @@ type Props = ComponentPropsWithoutRef<'div'> & {
   y: number;
 };
 
-export function Tooltip({ children, offset = 16, style, x, y, ...props }: Props) {
+export function Tooltip({ children, offset = 16, x, y, ...props }: Props) {
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!tooltipRef.current) return;
 
     const newTooltipStyle = {
@@ -27,16 +26,12 @@ export function Tooltip({ children, offset = 16, style, x, y, ...props }: Props)
       newTooltipStyle.transform = `translate(${x - offset - width}px, ${y}px)`;
     }
 
-    setTooltipStyle(newTooltipStyle);
+    tooltipRef.current.style.transform = newTooltipStyle.transform;
+    tooltipRef.current.style.opacity = newTooltipStyle.opacity;
   }, [x, y, offset]);
 
   return createPortal(
-    <div
-      className={styles.tooltip}
-      ref={tooltipRef}
-      style={{ ...style, ...tooltipStyle }}
-      {...props}
-    >
+    <div className={styles.tooltip} ref={tooltipRef} {...props}>
       {children}
     </div>,
     document.body,
