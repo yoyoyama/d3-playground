@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as d3 from 'd3';
+import { useCallback, useState } from 'react';
 import { ArcChart } from './components/ArcChart';
 import { BarChart } from './components/BarChart';
 import { LineChart } from './components/LineChart';
@@ -10,95 +9,34 @@ import type { BarChartData } from './components/BarChart';
 import type { LineChartData } from './components/LineChart';
 import type { PieChartData } from './components/PieChart';
 import type { StackedBarChartData } from './components/StackedBarChart';
+import {
+  generateArcChartData,
+  generateBarChartData,
+  generateLineChartData,
+  generatePieChartData,
+  generateStackedBarChartData,
+  period,
+} from './mocks/charts';
 
 import styles from './App.module.css';
 import githubIcon from './assets/img/github.svg';
 
-const fruits = [
-  { id: 'apple', label: 'Apple' },
-  { id: 'blueberry', label: 'Blueberry' },
-  { id: 'grape', label: 'Grape' },
-  { id: 'muscat', label: 'Muscat' },
-  { id: 'orange', label: 'Orange' },
-];
-
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-const to = new Date(today.getFullYear(), today.getMonth(), 0); // 前月の最終日
-const from = new Date(to.getFullYear(), to.getMonth(), 1); // 前月の初日
-const period: [Date, Date] = [from, to];
-
 export default function App() {
-  const [arcChartData, setArcChartData] = useState<ArcChartData>(0);
-  const [barChartData, setBarChartData] = useState<BarChartData>([]);
-  const [lineChartData, setLineChartData] = useState<LineChartData>([]);
-  const [pieChartData, setPieChartData] = useState<PieChartData>([]);
-  const [stackedBarChartData, setStackedBarChartData] = useState<StackedBarChartData>([]);
-
-  const generateArcChartData = useCallback(() => {
-    setArcChartData(Math.random());
-  }, []);
-
-  const generateBarChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ ...fruit, value: Math.round(Math.random() * 3000) }));
-
-    setBarChartData(data);
-  }, []);
-
-  const generateLineChartData = useCallback(() => {
-    const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
-
-    const data = dates.map((date) => {
-      const items = structuredClone(fruits).map((path, i, array) => ({
-        ...path,
-        value: Math.round(Math.random() * 1000) + (array.length - 1 - i) * 500,
-      }));
-
-      return { date, items };
-    });
-
-    setLineChartData(data);
-  }, []);
-
-  const generatePieChartData = useCallback(() => {
-    const data = fruits.map((fruit) => ({ ...fruit, value: Math.round(Math.random() * 3000) }));
-
-    setPieChartData(data);
-  }, []);
-
-  const generateStackedBarChartData = useCallback(() => {
-    const dates = d3.scaleTime().domain(period).ticks(d3.timeDay);
-
-    const data = dates.map((date) => {
-      const items = structuredClone(fruits).map((path) => ({
-        ...path,
-        value: Math.round(Math.random() * 500),
-      }));
-      const total = items.reduce((sum, item) => sum + item.value, 0);
-
-      return { date, items, total };
-    });
-
-    setStackedBarChartData(data);
-  }, []);
+  const [arcChartData, setArcChartData] = useState<ArcChartData>(generateArcChartData);
+  const [barChartData, setBarChartData] = useState<BarChartData>(generateBarChartData);
+  const [lineChartData, setLineChartData] = useState<LineChartData>(generateLineChartData);
+  const [pieChartData, setPieChartData] = useState<PieChartData>(generatePieChartData);
+  const [stackedBarChartData, setStackedBarChartData] = useState<StackedBarChartData>(
+    generateStackedBarChartData,
+  );
 
   const generateData = useCallback(() => {
-    generateArcChartData();
-    generateBarChartData();
-    generateLineChartData();
-    generatePieChartData();
-    generateStackedBarChartData();
-  }, [
-    generateArcChartData,
-    generateBarChartData,
-    generateLineChartData,
-    generatePieChartData,
-    generateStackedBarChartData,
-  ]);
-
-  useEffect(() => {
-    generateData();
-  }, [generateData]);
+    setArcChartData(generateArcChartData());
+    setBarChartData(generateBarChartData());
+    setLineChartData(generateLineChartData());
+    setPieChartData(generatePieChartData());
+    setStackedBarChartData(generateStackedBarChartData());
+  }, []);
 
   return (
     <div className={styles.page}>
